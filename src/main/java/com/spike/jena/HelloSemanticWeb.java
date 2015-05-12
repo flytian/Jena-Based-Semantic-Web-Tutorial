@@ -23,7 +23,9 @@ import com.hp.hpl.jena.util.FileManager;
 import static com.spike.jena.Constants.*;
 
 /**
- * Sematic Programming HelloWorld
+ * Sematic Programming HelloWorld<br/>
+ * 
+ * All RDF files except "foafSchema.rdf" are generate using Protege
  * 
  * @author zhoujiagen
  *
@@ -122,7 +124,7 @@ class HelloSemanticWeb {
 
 	private static void bindJenaRuleReasoner() {
 		final String rule = "[gmailFriend: (?person <http://xmlns.com/foaf/0.1/mbox_sha1sum> ?email), strConcat(?email, ?lit), regex(?lit, '(.*gmail.com)')"
-				+ "-> (?person " + RDF_TYPE + " <http://www.people.com#GmailPerson>)]";
+				+ "-> (?person " + RDF_TYPE_INSPARQL + " <http://www.people.com#GmailPerson>)]";
 		Reasoner ruleReasoner = new GenericRuleReasoner(Rule.parseRules(rule));
 		ruleReasoner = ruleReasoner.bindSchema(schema);
 		inferredModel = ModelFactory.createInfModel(ruleReasoner, friendsModel);

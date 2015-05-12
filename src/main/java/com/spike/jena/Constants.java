@@ -19,5 +19,7 @@ public class Constants {
 	public static final String XSD_URL = "http://www.w3.org/2001/XMLSchema#";
 	public static final String FOAF_URL = "http://xmlns.com/foaf/0.1/";
 
-	public static final String RDF_TYPE = "<" + RDF_URL + "type>";
+	public static final String RDF_TYPE_INSPARQL = "<" + RDF_URL + "type>";
+	public static final String RDF_TYPE_URL = RDF_URL + "type";
+
 }
