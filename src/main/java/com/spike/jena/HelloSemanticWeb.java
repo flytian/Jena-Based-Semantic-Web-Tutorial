@@ -23,43 +23,47 @@ import com.hp.hpl.jena.util.FileManager;
 import static com.spike.jena.Constants.*;
 
 /**
- * <ul>
- * <li>Author: zhoujg | Date: 2014-3-23 下午12:56:51</li>
- * <li>Description: Jena语义Web编程之HelloWorld</li>
- * </ul>
+ * Sematic Programming HelloWorld
+ * 
+ * @author zhoujiagen
+ *
  */
 class HelloSemanticWeb {
 	private static final String ONTOLOGY_DIR = "D:/sts-workspace/semanticWebTutorialUsingJena/ontology/";
 
-	// FOAF命名空间
+	// namespace of FOAF
 	private static final String FOAF_NS = "http://xmlns.com/foaf/0.1/";
-	// FOAF文件绝对路径
+	// absolute file path of FOAF RDF file
 	private static final String FOAF_SCHEMA_FN = ONTOLOGY_DIR + "foafSchema.rdf";
 
-	// myfoaf命名空间
+	// namespace of myfoaf
 	private static final String MYFOAF_NS = "http://blog.sina.com.cn/zhoujiagenontology/helloworld.owl";
-	// myfoaf文件绝对路径
+	// absolute file path of myfoaf RDF file
 	private static final String MYFOAF_DATA_FN = ONTOLOGY_DIR + "foafData.rdf";
 
-	// poeple命名空间
+	// namespace of poeple
 	private static final String PEOPLE_NS = "http://www.people.com";
-	// people文件的绝对路径
+	// absolute file path of people file
 	private static final String PEOPLE_SCHEMA_FN = ONTOLOGY_DIR + "peopleSchema.rdf";
 	private static final String PEOPLE_DATA_FN = ONTOLOGY_DIR + "peopleData.rdf";
 
-	// Jena的RDF模型
+	// Jena's RDF Model
 	private static Model friendsModel = null;
-	// 所有本体的Schema模型
+	// Schema Model of all ontology: the TBox
 	private static Model schema = null;
 
-	// 推理后模型
+	// Jena's Inferenced Model
 	private static InfModel inferredModel = null;
 
 	public static void main(String[] args) throws IOException {
 		version3();
 	}
 
-	/** version 1: rdf navigate using sparql query */
+	/**
+	 * version 1: rdf navigate using sparql query
+	 * 
+	 * @throws IOException
+	 */
 	public static void version1() throws IOException {
 		System.out.println("Load my FOAF friends");
 		friendsModel = populateMyFOAFFriends(MYFOAF_DATA_FN);
@@ -71,7 +75,11 @@ class HelloSemanticWeb {
 		sayHelloToMyFriends(friendsModel);
 	}
 
-	/** version 2: ontology integration using alignment */
+	/**
+	 * version 2: ontology integration using alignment
+	 * 
+	 * @throws IOException
+	 */
 	public static void version2() throws IOException {
 		System.out.println("Load the data");
 		loadABox();
@@ -79,18 +87,22 @@ class HelloSemanticWeb {
 		System.out.println("Generate the schema to contain all ontology's tbox");
 		loadTBox();
 
-		// 本体对准
+		// ontology alignment
 		alignmentInTBox();
 
-		// 绑定到推理机
+		// bind OWL reasoner
 		bindReasoner();
 
-		// 执行查询
+		// execute SPARQL query
 		sayHelloToMyself(inferredModel);
 		sayHelloToMyFriends(inferredModel);
 	}
 
-	/** version 3: using jena rules */
+	/**
+	 * version 3: using jena rules
+	 * 
+	 * @throws IOException
+	 */
 	public static void version3() throws IOException {
 		System.out.println("Load the data");
 		loadABox();
@@ -98,17 +110,17 @@ class HelloSemanticWeb {
 		System.out.println("Generate the schema to contain all ontology's tbox");
 		loadTBox();
 
-		// 本体对准
+		// ontology alignment
 		alignmentInTBox();
 
-		// 绑定到规则推理机
-		bindJenaReasoner();
+		// bind rule reasoner
+		bindJenaRuleReasoner();
 
-		// 执行查询
+		// execute SPARQL query
 		sayHelloToGmailFriends(inferredModel);
 	}
 
-	private static void bindJenaReasoner() {
+	private static void bindJenaRuleReasoner() {
 		final String rule = "[gmailFriend: (?person <http://xmlns.com/foaf/0.1/mbox_sha1sum> ?email), strConcat(?email, ?lit), regex(?lit, '(.*gmail.com)')"
 				+ "-> (?person " + RDF_TYPE + " <http://www.people.com#GmailPerson>)]";
 		Reasoner ruleReasoner = new GenericRuleReasoner(Rule.parseRules(rule));
@@ -116,27 +128,33 @@ class HelloSemanticWeb {
 		inferredModel = ModelFactory.createInfModel(ruleReasoner, friendsModel);
 	}
 
-	/** 加载所有本体的ABox */
+	/**
+	 * load all ontologies' ABox
+	 */
 	private static void loadABox() {
 		friendsModel = ModelFactory.createDefaultModel();
-		InputStream is = FileManager.get().open(MYFOAF_DATA_FN);// MyFOAF的data
+		InputStream is = FileManager.get().open(MYFOAF_DATA_FN);// MyFOAF ABox
 		friendsModel.read(is, MYFOAF_NS);
 
-		is = FileManager.get().open(PEOPLE_DATA_FN);// people的data
+		is = FileManager.get().open(PEOPLE_DATA_FN);// people ABox
 		friendsModel.read(is, PEOPLE_NS);
 	}
 
-	/** 加载所有本体的TBox */
+	/**
+	 * Load all ontologies' TBox
+	 */
 	private static void loadTBox() {
 		schema = ModelFactory.createDefaultModel();
-		InputStream is = FileManager.get().open(FOAF_SCHEMA_FN);// FOAF的Schema
+		InputStream is = FileManager.get().open(FOAF_SCHEMA_FN);// FOAF TBox
 		schema.read(is, FOAF_NS);
 
-		is = FileManager.get().open(PEOPLE_SCHEMA_FN);// people的Schema
+		is = FileManager.get().open(PEOPLE_SCHEMA_FN);// people TBox
 		schema.read(is, PEOPLE_NS);
 	}
 
-	/** 本体对准ontology alignment */
+	/**
+	 * Ontology Alignment: TBox
+	 */
 	private static void alignmentInTBox() {
 		// [1]people:Individual = foaf:Person
 		Resource resource = schema.createResource(PEOPLE_NS + "#Individual");
@@ -169,7 +187,16 @@ class HelloSemanticWeb {
 		inferredModel = ModelFactory.createInfModel(reasoner, friendsModel);// abox
 	}
 
-	/** 填充模型 */
+	/**
+	 * fill model using files
+	 * 
+	 * @param base
+	 *            the namespace
+	 * @param filePath
+	 *            the RDF file absolute path
+	 * @return
+	 * @throws IOException
+	 */
 	private static Model fillModel(String base, String filePath) throws IOException {
 		Model model = ModelFactory.createDefaultModel();
 		InputStream is = FileManager.get().open(filePath);
@@ -178,12 +205,22 @@ class HelloSemanticWeb {
 		return model;
 	}
 
-	/** MyFOAF填充模型 */
+	/**
+	 * fill the FOAF model
+	 * 
+	 * @param filePath
+	 * @return
+	 * @throws IOException
+	 */
 	private static Model populateMyFOAFFriends(String filePath) throws IOException {
 		return fillModel(MYFOAF_NS, filePath);
 	}
 
-	/** RDF模型导航：SPARQL查询 - 查询自己name */
+	/**
+	 * RDF Model navigation using SPARQL Query: my name
+	 * 
+	 * @param model
+	 */
 	private static void sayHelloToMyself(Model model) {
 		String query = generateMyselfSPARQLQuery();
 		sparql(model, query, "?name");
@@ -194,13 +231,26 @@ class HelloSemanticWeb {
 		sparql(model, query, "?name");
 	}
 
-	/** RDF模型导航：SPARQL查询 - 查询朋友name */
+	/**
+	 * RDF Model navigation using SPARQL Query: friends' names
+	 * 
+	 * @param model
+	 */
 	private static void sayHelloToMyFriends(Model model) {
 		String query = generateFriendsSPARQLQuery();
 		sparql(model, query, "?name");
 	}
 
-	/** 在RDF模型中执行SPARQL查询 */
+	/**
+	 * RDF Navigation using SPARQL Query
+	 * 
+	 * @param model
+	 *            the RDF model
+	 * @param query
+	 *            SPARQL Query String
+	 * @param field
+	 *            the placeholder of filed in parameter query
+	 */
 	private static void sparql(Model model, String query, String field) {
 		Query q = QueryFactory.create(query);
 		QueryExecution qexec = QueryExecutionFactory.create(q, model);
@@ -211,7 +261,7 @@ class HelloSemanticWeb {
 		ResultSet rs = qexec.execSelect();
 		while (rs.hasNext()) {
 			QuerySolution qs = rs.nextSolution();
-			RDFNode name = qs.get(field);// 暂用RDFNode
+			RDFNode name = qs.get(field);// using RDFNode currently
 			if (name != null) {
 				System.out.println("Hello to " + name);
 			} else {
@@ -223,7 +273,7 @@ class HelloSemanticWeb {
 
 	private static String generateMyselfSPARQLQuery() {
 		StringBuilder sb = generateSPARQLPREFIX();
-		// 添加查询语句
+		// append query statement
 		sb.append("SELECT DISTINCT ?name").append(NEWLINE).append("WHERE { myfoaf:me foaf:name ?name}").append(NEWLINE);
 		return sb.toString();
 	}
@@ -241,7 +291,11 @@ class HelloSemanticWeb {
 		return sb.toString();
 	}
 
-	/** 添加SPARQL查询前缀PREFIX */
+	/**
+	 * generate SPARQL Query prefixes
+	 * 
+	 * @return
+	 */
 	private static StringBuilder generateSPARQLPREFIX() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>").append(NEWLINE)

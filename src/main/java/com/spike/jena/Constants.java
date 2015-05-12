@@ -1,10 +1,10 @@
 package com.spike.jena;
 
 /**
- * <ul>
- * <li>Author: zhoujg | Date: 2014-3-23 下午1:25:14</li>
- * <li>Description: 常量类</li>
- * </ul>
+ * Application Constant
+ * 
+ * @author zhoujiagen
+ *
  */
 public class Constants {
 	public static final String NEWLINE = System.getProperty("line.separator");
@@ -12,6 +12,7 @@ public class Constants {
 
 	public static final String BOUNDARY = "-----------------------------------------------------------------------";
 
+	// default namespace
 	public static final String RDF_URL = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	public static final String RDFS_URL = "http://www.w3.org/2000/01/rdf-schema#";
 	public static final String OWL_URL = "http://www.w3.org/2002/07/owl#";
