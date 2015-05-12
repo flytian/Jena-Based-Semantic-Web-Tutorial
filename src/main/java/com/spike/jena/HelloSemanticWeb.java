@@ -31,7 +31,7 @@ import static com.spike.jena.Constants.*;
  *
  */
 class HelloSemanticWeb {
-	private static final String ONTOLOGY_DIR = "D:/sts-workspace/semanticWebTutorialUsingJena/ontology/";
+	private static final String ONTOLOGY_DIR = "ontology/";
 
 	// namespace of FOAF
 	private static final String FOAF_NS = "http://xmlns.com/foaf/0.1/";
@@ -58,7 +58,11 @@ class HelloSemanticWeb {
 	private static InfModel inferredModel = null;
 
 	public static void main(String[] args) throws IOException {
-		version3();
+		version1();
+
+		// version2();
+
+		// version3();
 	}
 
 	/**

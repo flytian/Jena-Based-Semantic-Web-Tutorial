@@ -20,7 +20,7 @@ import com.spike.jena.util.SPARQLUtils;
 public class TDBManipulation {
 	private static final Logger logger = Logger.getLogger(TDBManipulation.class);
 
-	private static final String TDB_DIR = "D:/sts-workspace/semanticWebTutorialUsingJena/tdb";
+	private static final String TDB_DIR = "tdb";
 
 	private static final String ONTOLOGY_DIR = "D:/sts-workspace/semanticWebTutorialUsingJena/ontology/";
 	private static final String FOAF_BASE_URI = "http://xmlns.com/foaf/0.1/";
@@ -31,6 +31,8 @@ public class TDBManipulation {
 		// ModelUtils.cleanDirectory(TDB_DIR);
 
 		demoOfUsingADirectory();
+
+		// demoOfUsingAnAssemblerFile();
 	}
 
 	/**
@@ -38,18 +40,30 @@ public class TDBManipulation {
 	 * Assembler</a> for concrete details
 	 */
 	static void demoOfUsingAnAssemblerFile() {
-		// TODO
+		// Assembler way: Make a TDB-back Jena model in the named directory.
+		// This way, you can change the model being used without changing the
+		// code.
+		// The assembler file is a configuration file.
+		// The same assembler description will work in Fuseki.
+		String assemblerFile = "Store/tdb-assembler.ttl";
+		Dataset dataset = TDBFactory.assembleDataset(assemblerFile); // ...
 
-		/*
-		 * // Assembler way: Make a TDB-back Jena model in the named directory.
-		 * // This way, you can change the model being used without changing the
-		 * // code. // The assembler file is a configuration file. // The same
-		 * assembler description will work in Fuseki. String assemblerFile =
-		 * "Store/tdb-assembler.ttl"; Dataset dataset =
-		 * TDBFactory.assembleDataset(assemblerFile); // ...
-		 * dataset.begin(ReadWrite.READ); // Get model inside the transaction
-		 * Model model = dataset.getDefaultModel(); dataset.end(); // ...
-		 */
+		// read something
+		logger.debug("read tx start!!!");
+		demoOfReadTransaction(dataset);
+		logger.debug("read tx end!!!");
+
+		// write something
+		logger.debug("write tx start!!!");
+		demoOfWriteTransaction(dataset);
+		logger.debug("write tx end!!!");
+
+		// read again
+		logger.debug("read tx start!!!");
+		demoOfReadTransaction(dataset);
+		logger.debug("read tx end!!!");
+
+		dataset.close();
 	}
 
 	static void demoOfUsingADirectory() {

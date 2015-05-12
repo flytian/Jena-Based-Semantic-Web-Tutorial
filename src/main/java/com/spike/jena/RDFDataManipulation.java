@@ -17,7 +17,7 @@ import com.spike.jena.util.SPARQLUtils;
  *
  */
 public class RDFDataManipulation {
-	private static final String ONTOLOGY_DIR = "D:/sts-workspace/semanticWebTutorialUsingJena/ontology/";
+	private static final String ONTOLOGY_DIR = "ontology/";
 
 	private static final String FOAF_BASE_URI = "http://xmlns.com/foaf/0.1/";
 	private static final String FOAF_SCHEMA_FilePath = ONTOLOGY_DIR + "foafSchema.rdf";
