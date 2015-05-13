@@ -2,6 +2,7 @@ package com.spike.jena.util;
 
 import static com.spike.jena.Constants.BOUNDARY;
 import static com.spike.jena.Constants.NEWLINE;
+import static com.spike.jena.Constants.TAB;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -26,31 +27,76 @@ public class SPARQLUtils {
 	 *            the RDF model
 	 * @param query
 	 *            SPARQL Query String
-	 * @param queryField
+	 * @param queryFields
 	 *            the placeholder of filed in parameter query(sample: ?name)
 	 */
-	public static void query(final Model model, final String query, final String queryField) {
+	public static void query(final Model model, final String query, final String... queryFields) {
 		Query q = QueryFactory.create(query);
 		QueryExecution qexec = QueryExecutionFactory.create(q, model);
 		System.out.println("Plan to run SPARQL query: ");
 		System.out.println(BOUNDARY);
 		System.out.println(query);
 		System.out.println(BOUNDARY);
-		ResultSet rs = qexec.execSelect();
 
-		System.out.println("Result:");
-		while (rs.hasNext()) {
-			QuerySolution qs = rs.nextSolution();
-			RDFNode name = qs.get(queryField);// using RDFNode currently
-			if (name != null) {
-				System.out.println(name);
-			} else {
-				System.out.println("No Result!");
-			}
-		}
+		ResultSet rs = qexec.execSelect();
+		rendererResultSet(rs, queryFields);
+
 		System.out.println(BOUNDARY);
 
 		qexec.close();
+	}
+
+	/**
+	 * RDF Navigation using remote SPARQL Query
+	 * 
+	 * @param service
+	 *            the SAPRQL end point URL
+	 * @param query
+	 *            SPARQL Query String
+	 * @param queryField
+	 *            the placeholder of filed in parameter query(sample: ?name)
+	 */
+	public static void queryRemote(final String service, final String query, String... queryFields) {
+		if (queryFields == null || queryFields.length == 0) {
+			return;
+		}
+
+		QueryExecutionFactory.sparqlService(service, query);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(service, query);
+
+		System.out.println("Plan to run remote SPARQL query: ");
+		System.out.println(BOUNDARY);
+		System.out.println(query);
+		System.out.println(BOUNDARY);
+
+		ResultSet rs = qexec.execSelect();
+		rendererResultSet(rs, queryFields);
+
+		System.out.println(BOUNDARY);
+
+		qexec.close();
+	}
+
+	private static void rendererResultSet(ResultSet rs, String... queryFields) {
+		System.out.println("Result:");
+		int queryFieldSize = queryFields.length;
+		for (int i = 0; i < queryFieldSize; i++) {
+			System.out.print(queryFields[i] + TAB);
+		}
+		System.out.println();
+
+		while (rs.hasNext()) {
+			QuerySolution qs = rs.nextSolution();
+			for (int i = 0; i < queryFieldSize; i++) {
+				RDFNode name = qs.get(queryFields[i]);
+				if (name != null) {
+					System.out.print(name + TAB);
+				} else {
+					System.out.print("NULL" + TAB);
+				}
+			}
+			System.out.println();
+		}
 	}
 
 	/**
