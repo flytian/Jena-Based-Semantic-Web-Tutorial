@@ -1,0 +1,11 @@
+/**
+Description: 
+WRONG!!!
+*/
+START theater=node:venue(name='Theatre Royal'),
+	newcastle=node:city(name='Newcastle'),
+	bard=node:*(lastname='Shakespeare')
+MATCH 	(newcastle)<-[:STREET|CITY*1..2]-(theater)<-[:VENUE]
+	-()-[:PERFORMANCE_OF]->()-[:PRODUCTION_OF]->(play)
+	<-[:WROTE_PLAY]-(bard)
+RETURN DISTINCT play.title AS play

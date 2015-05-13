@@ -1,0 +1,52 @@
+/**
+Description: shakespeare graph cypher CREATE script
+REF: Robinson I., Webber J., Fifrem E. Graph Databases. 2013.
+Published by O’Reilly Media, Inc., 1005 Gravenstein Highway North, Sebastopol, CA 95472.
+
+3 Domains
+(1) literal: BORN_IN, WROTE_PLAY
+(2) theatrical: VENUE, PERFORMANCE_OF, PRODUCED, PRODUCTION_OF, BASED_IN, WROTE_REVIEW, REVIEW_OF
+(3) geospatial: COUNTRY, CITY, STREET
+
+Output: Created 17 nodes, set 21 properties, created 21 relationships
+*/
+
+CREATE 
+(shakespeare { firstname: 'William', lastname: 'Shakespeare' }),
+(juliusCaesar { title: 'Julius Caesar' }),
+(shakespeare)-[:WROTE_PLAY { year: 1599 }]->(juliusCaesar),
+(theTempest { title: 'The Tempest' }),
+(shakespeare)-[:WROTE_PLAY { year: 1610}]->(theTempest),
+(rsc { name: 'RSC' }),
+(production1 { name: 'Julius Caesar' }),
+(rsc)-[:PRODUCED]->(production1),
+(production1)-[:PRODUCTION_OF]->(juliusCaesar),
+(performance1 { date: 20120729 }),
+(performance1)-[:PERFORMANCE_OF]->(production1),
+(production2 { name: 'The Tempest' }),
+(rsc)-[:PRODUCED]->(production2),
+(production2)-[:PRODUCTION_OF]->(theTempest),
+(performance2 { date: 20061121 }),
+(performance2)-[:PERFORMANCE_OF]->(production2),
+(performance3 { date: 20120730 }),
+(performance3)-[:PERFORMANCE_OF]->(production1),
+(billy { name: 'Billy' }),
+(review { rating: 5, review: 'This was awesome!' }),
+(billy)-[:WROTE_REVIEW]->(review),
+(review)-[:RATED]->(performance1),
+(theatreRoyal { name: 'Theatre Royal' }),
+(performance1)-[:VENUE]->(theatreRoyal),
+(performance2)-[:VENUE]->(theatreRoyal),
+(performance3)-[:VENUE]->(theatreRoyal),
+(greyStreet { name: 'Grey Street' }),
+(theatreRoyal)-[:STREET]->(greyStreet),
+(newcastle { name: 'Newcastle' }),
+(greyStreet)-[:CITY]->(newcastle),
+(tyneAndWear { name: 'Tyne and Wear' }),
+(newcastle)-[:COUNTY]->(tyneAndWear),
+(england { name: 'England' }),
+(tyneAndWear)-[:COUNTRY]->(england),
+(stratford { name: 'Stratford upon Avon' }),
+(stratford)-[:COUNTRY]->(england),
+(rsc)-[:BASED_IN]->(stratford),
+(shakespeare)-[:BORN_IN]->stratford
