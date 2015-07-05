@@ -12,6 +12,12 @@
 hs_err_pid*
 /target/
 
+# project settings
+*.classpath
+*.settings
+*.prefs
+*.project
+
 # TDB Files #
 *.dat
 *.idn

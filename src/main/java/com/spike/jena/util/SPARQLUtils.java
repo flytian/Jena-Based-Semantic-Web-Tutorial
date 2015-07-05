@@ -61,7 +61,6 @@ public class SPARQLUtils {
 			return;
 		}
 
-		QueryExecutionFactory.sparqlService(service, query);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(service, query);
 
 		System.out.println("Plan to run remote SPARQL query: ");
