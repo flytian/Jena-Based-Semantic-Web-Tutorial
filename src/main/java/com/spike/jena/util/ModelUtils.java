@@ -1,7 +1,6 @@
 package com.spike.jena.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,6 +8,7 @@ import java.nio.file.Paths;
 import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileManager;
 
 /**
@@ -24,19 +24,43 @@ public class ModelUtils {
 	 * Fill model using a file
 	 * 
 	 * @param model
-	 *            the filled model1
+	 *            the filled model, NOT NULL
 	 * @param base
 	 *            the base uri
 	 * @param filePath
 	 *            the file's absolute path
-	 * @throws IOException
 	 */
 	public static final void fillModel(Model model, String base, String filePath) {
+		if (null == model) {
+			return;
+		}
+
 		try (InputStream is = FileManager.get().open(filePath)) {
 			model.read(is, base);
 		} catch (Exception e) {
 			logger.error("fillModel failed, refer", e);
 		}
+	}
+
+	/**
+	 * create a model from RDF file
+	 * 
+	 * @param base
+	 *            the base uri
+	 * @param filePath
+	 *            the file's absolute path
+	 * @return
+	 */
+	public static final Model fillEmptyModel(String base, String filePath) {
+		Model model = ModelFactory.createDefaultModel();
+
+		try (InputStream is = FileManager.get().open(filePath)) {
+			model.read(is, base);
+		} catch (Exception e) {
+			logger.error("fillEmptyModel failed, refer", e);
+		}
+
+		return model;
 	}
 
 	/**
